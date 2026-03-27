@@ -1,0 +1,71 @@
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build files
+/dist
+/build
+/public/build
+.cache
+.next
+
+# IDE files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Testing files
+/coverage
+/jest/
+
+# React-related files
+*.lock
+/public/static
+*.map
+
+# MongoDB & PostgreSQL
+/mongod.lock
+/data/db
+/postgresql_data/
+
+# FastAPI & Python dependencies
+nlp-api/__pycache__/
+nlp-api/.venv/
+nlp-api/venv/
+nlp-api/db.sqlite3
+nlp-api/__pycache__/
+nlp-api/*.pyc
+
+# Python virtual environment
+venv/
+*.pyc
+*.pyo
+__pycache__/
+*.sqlite3
+
+# Deployment-related
+/.vercel/
+/.netlify/
+/.heroku/
+/.env.production
+
+# Other OS-related files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,118 @@
+.analytics-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto; /* full vertical scrolling */
+  padding: 2rem;
+  margin-top: 20px;
+}
+
+/* Dashboard Container */
+.analytics-dashboard {
+  width: 90%;
+  max-width: 1400px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  text-align: center;
+  position: relative;
+}
+
+/* Chart Layout */
+.chart-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 80px; /* Added extra spacing */
+  padding-bottom: 100px; /* Prevents cut-off at bottom */
+}
+
+/* Row Layout */
+.chart-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 40px;
+}
+
+/* Chart Box */
+.chart-container {
+  width: 48%;
+  height: 420px; /* Slightly larger for better view */
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column; /* Ensures title is above chart */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Enlarged Pie Chart */
+.large-chart {
+  width: 85%;
+  height: 650px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure Titles Appear on Top */
+.chart-container h2,
+.large-chart h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  color: rgb(0, 0, 0);
+  text-align: center;
+}
+
+/* Scrollbar */
+.analytics-page::-webkit-scrollbar {
+  width: 12px;
+}
+
+.analytics-page::-webkit-scrollbar-track {
+  background: rgba(17, 16, 16, 0.1);
+}
+
+.analytics-page::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+}
+
+.analytics-page::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Fix for Overlapping Issues */
+@media (max-width: 1024px) {
+  .chart-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .chart-container {
+    width: 100%;
+  }
+
+  .large-chart {
+    width: 100%;
+    height: 550px;
+  }
+}
