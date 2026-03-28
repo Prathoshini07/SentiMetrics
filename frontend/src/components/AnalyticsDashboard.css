@@ -1,118 +1,183 @@
 .analytics-page {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100vw;
-  height: 100vh;
-  overflow-y: auto; /* full vertical scrolling */
-  padding: 2rem;
-  margin-top: 20px;
-}
-
-/* Dashboard Container */
-.analytics-dashboard {
-  width: 90%;
+  padding: 3rem;
   max-width: 1400px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(12px);
-  text-align: center;
-  position: relative;
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
-/* Chart Layout */
+.analytics-dashboard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  padding: 3.5rem;
+  border-radius: 2.5rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.analytics-dashboard h1 {
+  font-size: 3rem;
+  margin-bottom: 3rem;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+}
+
+/* Metrics Section */
+.metrics-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.metric-card {
+  padding: 2rem;
+  background: var(--white);
+  border-radius: 1.5rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.metric-card h3 {
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.metric-card p {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Charts Section */
 .chart-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
-  gap: 80px; /* Added extra spacing */
-  padding-bottom: 100px; /* Prevents cut-off at bottom */
+  gap: 3rem;
+  align-items: center; /* Center charts vertically */
 }
 
-/* Row Layout */
 .chart-row {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  gap: 40px;
-}
-
-/* Chart Box */
-.chart-container {
-  width: 48%;
-  height: 420px; /* Slightly larger for better view */
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  display: flex;
-  flex-direction: column; /* Ensures title is above chart */
-  align-items: center;
-  justify-content: center;
-}
-
-/* Enlarged Pie Chart */
-.large-chart {
-  width: 85%;
-  height: 650px;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  display: flex;
   flex-direction: column;
+  gap: 3rem;
+  width: 100%;
   align-items: center;
-  justify-content: center;
 }
 
-/* Ensure Titles Appear on Top */
-.chart-container h2,
-.large-chart h2 {
-  margin-bottom: 15px;
-  font-size: 1.5rem;
-  color: rgb(0, 0, 0);
+.chart-container {
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: 2rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #f1f5f9;
+  width: 100%;
+  max-width: 800px; /* Optimal size for readability */
+  margin: 0 auto;
+}
+
+.large-chart {
+  max-width: 1000px;
+}
+
+.pie-chart {
+  max-width: 600px; /* Smaller size for pie charts as requested */
+}
+
+/* Keyword Selector */
+.keyword-selector {
+  margin-bottom: 2rem;
   text-align: center;
 }
 
-/* Scrollbar */
+.keyword-selector h3 {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.keyword-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.kw-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--white);
+  border: 1px solid #e2e8f0;
+  border-radius: 3rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  text-transform: capitalize;
+}
+
+.kw-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.kw-btn.active {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+}
+
+.no-data-msg {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+.empty-chart {
+  background: rgba(248, 250, 252, 0.5);
+  border: 2px dashed #e2e8f0;
+}
+
+.chart-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: var(--text-muted);
+}
+
+/* Scrollbar styling */
 .analytics-page::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 
 .analytics-page::-webkit-scrollbar-track {
-  background: rgba(17, 16, 16, 0.1);
+  background: #f1f5f9;
 }
 
 .analytics-page::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 5px;
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 
 .analytics-page::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.7);
+  background: #94a3b8;
 }
 
-/* Fix for Overlapping Issues */
 @media (max-width: 1024px) {
-  .chart-row {
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-  }
-
-  .chart-container {
-    width: 100%;
-  }
-
-  .large-chart {
-    width: 100%;
-    height: 550px;
-  }
+  .chart-row { flex-direction: column; }
+  .large-chart { max-width: 1000px; }
+  .analytics-dashboard { padding: 2rem; }
 }

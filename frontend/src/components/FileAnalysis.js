@@ -176,25 +176,25 @@ const FileAnalysis = () => {
         <div className="chart-section">
           <div className="chart-row">
             {emotionDistribution.labels.length > 0 && (
-              <div className="chart-container fade-in">
+              <div className="chart-container pie-chart fade-in">
                 <h2>Emotion Distribution</h2>
-                <Pie data={emotionDistribution} options={{ maintainAspectRatio: false }} />
+                <Pie data={emotionDistribution} />
               </div>
             )}
 
             {sentimentTrend.labels.length > 0 && (
               <div className="chart-container fade-in">
                 <h2>Sentiment Trend Over Time</h2>
-                <Line data={sentimentTrend} options={{ maintainAspectRatio: false }} />
+                <Line data={sentimentTrend} />
               </div>
             )}
           </div>
 
           {/* Sentiment Distribution Pie Chart */}
           {sentimentDistribution.datasets[0].data.some((value) => value > 0) && (
-            <div className="chart-container fade-in">
+            <div className="chart-container pie-chart fade-in">
               <h2>Sentiment Distribution</h2>
-              <Pie data={sentimentDistribution} options={{ maintainAspectRatio: false }} />
+              <Pie data={sentimentDistribution} />
             </div>
           )}
         </div>

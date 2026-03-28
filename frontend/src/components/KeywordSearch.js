@@ -28,31 +28,60 @@ const KeywordSearch = () => {
     <div className="container">
       <h2>🔍 Keyword Insights Search</h2>
 
-      <div className="content-wrapper">
-        <div className="input-section">
-          <input
-            type="text"
-            className="search-input"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Enter product/feature keyword..."
-          />
-          <button onClick={searchKeyword} disabled={loading}>
-            {loading ? "Searching..." : "Search"}
-          </button>
-          
-          {error && <p className="error-msg">{error}</p>}
-        </div>
-
-        <div className="result-section">
-          {result && (
-            <div className="result-box">
-              <h4>Matches Found: {result.insights?.totalMentions || 0}</h4>
-              <pre>{JSON.stringify(result, null, 2)}</pre>
-            </div>
-          )}
-        </div>
+      {/* Restructured Layout */}
+      <div className="search-row">
+        <input
+          type="text"
+          className="search-input"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="Enter product/feature keyword..."
+        />
+        <button className="search-button" onClick={searchKeyword} disabled={loading}>
+          {loading ? "Searching..." : "Search"}
+        </button>
       </div>
+
+      {error && <p className="error-msg">{error}</p>}
+
+      {/* Result Section Below */}
+      {result && result.insights && (
+        <div className="result-section">
+          <div className="result-box">
+            <h4>Search Insights for "{result.keyword}"</h4>
+            
+            <div className="insights-grid">
+              <div className="insight-card">
+                <span className="label">Total Mentions</span>
+                <span className="value">{result.insights.totalMentions}</span>
+              </div>
+              <div className="insight-card">
+                <span className="label">Avg. Sentiment</span>
+                <span className="value">{result.insights.averageSentiment.toFixed(1)}%</span>
+              </div>
+              <div className="insight-card">
+                <span className="label">Top Emotion</span>
+                <span className="value" style={{ textTransform: 'capitalize' }}>
+                  {result.insights.mostCommonEmotion}
+                </span>
+              </div>
+            </div>
+
+            {result.insights.emotionDistribution && (
+              <div className="distribution-summary">
+                <h5>Emotion Breakdown</h5>
+                <div className="topic-tags">
+                  {Object.entries(result.insights.emotionDistribution).map(([emotion, count]) => (
+                    <span key={emotion} className="topic-tag">
+                      {emotion}: {count}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Reused generic layout links */}
       <div className="navigation-links">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Bar, Pie, Line } from "react-chartjs-2";
+import { Pie, Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import "./AnalyticsDashboard.css";
 
@@ -9,6 +9,7 @@ Chart.register(...registerables);
 const AnalyticsDashboard = () => {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedKeyword, setSelectedKeyword] = useState("delivery");
 
   useEffect(() => {
     const fetchAnalyticsData = async () => {
@@ -39,9 +40,6 @@ const AnalyticsDashboard = () => {
   }
 
   const emotionDistributionData = analyticsData.emotionDistribution || {};
-  const sentimentTrendData = analyticsData.sentimentTrend || { labels: [], data: [] };
-  const emotionIntensityData = analyticsData.emotionIntensity || { labels: [], data: [] };
-
   const positiveEmotions = ["joy", "happy"];
   const negativeEmotions = ["anger", "disappointment"];
 
@@ -71,20 +69,6 @@ const AnalyticsDashboard = () => {
     ],
   };
 
-  const sentimentTrend = {
-    labels: sentimentTrendData.labels || [],
-    datasets: [
-      {
-        label: "Average Sentiment",
-        data: sentimentTrendData.data || [],
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-        borderColor: "#36A2EB",
-        borderWidth: 3,
-        hoverBackgroundColor: "#4BC0C0",
-      },
-    ],
-  };
-
   const sentimentDistribution = {
     labels: ["Positive", "Neutral", "Negative"],
     datasets: [
@@ -96,16 +80,24 @@ const AnalyticsDashboard = () => {
     ],
   };
 
-  const emotionIntensity = {
-    labels: emotionIntensityData.labels || [],
+  const keywordTrends = analyticsData.keywordTrends || {};
+  const availableKeywords = ["delivery", "quality", "customer service", "pricing", "support"];
+  const activeTrendData = keywordTrends[selectedKeyword] || { labels: [], data: [] };
+
+  const activeTrend = {
+    labels: activeTrendData.labels,
     datasets: [
       {
-        label: "Emotion Intensity Over Time",
-        data: emotionIntensityData.data || [],
-        fill: false,
-        borderColor: "#FF6384",
+        label: "Sentiment Score",
+        data: activeTrendData.data,
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        borderColor: "#36A2EB",
         borderWidth: 3,
+        pointBackgroundColor: "#fff",
+        pointBorderColor: "#36A2EB",
+        pointHoverRadius: 6,
         tension: 0.3,
+        fill: true,
       },
     ],
   };
@@ -133,34 +125,48 @@ const AnalyticsDashboard = () => {
 
         {/* Charts Section */}
         <div className="chart-section">
+          {/* Keyword Toggle UI */}
+          <div className="keyword-selector fade-in">
+            <h3>Analyze Trends by Keyword</h3>
+            <div className="keyword-buttons">
+              {availableKeywords.map((kw) => (
+                <button
+                  key={kw}
+                  className={`kw-btn ${selectedKeyword === kw ? "active" : ""}`}
+                  onClick={() => setSelectedKeyword(kw)}
+                >
+                  {kw}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="chart-row">
-            {emotionDistribution.labels.length > 0 && (
+            {activeTrendData.labels.length > 0 ? (
               <div className="chart-container fade-in">
-                <h2>Emotion Distribution</h2>
-                <Pie data={emotionDistribution} options={{ maintainAspectRatio: false }} />
+                <h2>{selectedKeyword.toUpperCase()} Sentiment Trend</h2>
+                <Line data={activeTrend} />
+              </div>
+            ) : (
+              <div className="chart-container fade-in empty-chart">
+                <h2>{selectedKeyword.toUpperCase()} Sentiment Trend</h2>
+                <div className="no-data-msg">No sentiment trends found.</div>
               </div>
             )}
 
-            {sentimentTrend.labels.length > 0 && (
-              <div className="chart-container fade-in">
-                <h2>Sentiment Trend Over Time</h2>
-                <Bar data={sentimentTrend} options={{ maintainAspectRatio: false }} />
+            {emotionDistribution.labels.length > 0 && (
+              <div className="chart-container pie-chart fade-in">
+                <h2>Emotion Distribution</h2>
+                <Pie data={emotionDistribution} />
               </div>
             )}
           </div>
 
-          {/* Enlarged Sentiment Distribution Chart */}
+          {/* Sentiment Distribution Chart */}
           {sentimentDistribution.datasets[0].data.some((value) => value > 0) && (
-            <div className="chart-container large-chart fade-in">
-              <h2>Sentiment Distribution</h2>
-              <Pie data={sentimentDistribution} options={{ maintainAspectRatio: false }} />
-            </div>
-          )}
-
-          {emotionIntensity.labels.length > 0 && (
-            <div className="chart-container fade-in">
-              <h2>Emotion Intensity Over Time</h2>
-              <Line data={emotionIntensity} options={{ maintainAspectRatio: false }} />
+            <div className="chart-container large-chart pie-chart fade-in">
+              <h2>Overall Sentiment Distribution</h2>
+              <Pie data={sentimentDistribution} />
             </div>
           )}
         </div>
