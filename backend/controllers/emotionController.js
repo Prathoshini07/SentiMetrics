@@ -8,28 +8,28 @@ const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 
 export const analyzeText = async (req, res) => {
-    try {
-        const { text } = req.body;
-        if (!text) return res.status(400).json({ error: "Text is required for analysis." });
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ error: "Text is required for analysis." });
 
-        // 🟢 Perform real NLP-based emotion analysis (ASYNC)
-        const { emotions, topics, absa } = await analyzeSentiment(text); 
-        // 🟢 Save to database
-        const analysisResult = new Emotion({
-            text,
-            emotions, 
-            topics,
-            absa
-        });
+    // 🟢 Perform real NLP-based emotion analysis (ASYNC)
+    const { emotions, topics, absa } = await analyzeSentiment(text);
+    // 🟢 Save to database
+    const analysisResult = new Emotion({
+      text,
+      emotions,
+      topics,
+      absa
+    });
 
-        await analysisResult.save();
+    await analysisResult.save();
 
-        return res.status(200).json(analysisResult);
+    return res.status(200).json(analysisResult);
 
-    } catch (error) {
-        console.error("Error analyzing text:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
-    }
+  } catch (error) {
+    console.error("Error analyzing text:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 // ✅ Fetch all feedback from the database
@@ -67,12 +67,23 @@ export const getAnalyticsData = async (req, res) => {
       emotionDistribution[entry._id] = entry.count;
     });
 
-    // 🟢 Sentiment Trend Analysis (Last 5 feedbacks)
-    const last5Entries = await Emotion.find().sort({ _id: -1 }).limit(5);
-    const sentimentTrend = {
-      labels: last5Entries.map((entry, index) => `Feedback ${index + 1}`),
-      data: last5Entries.map((entry) => Math.floor(entry.emotions.primary.confidence * 100))
-    };
+    // 🟢 Keyword-Specific Sentiment Trend Analysis
+    const predefinedKeywords = ["delivery", "quality", "customer service", "pricing", "support"];
+    const keywordTrends = {};
+
+    for (const keyword of predefinedKeywords) {
+      const matches = await Emotion.find({
+        $or: [
+          { text: { $regex: keyword, $options: "i" } },
+          { "topics.main": { $regex: keyword, $options: "i" } }
+        ]
+      }).sort({ _id: 1 }); // Sort chronological (oldest to newest)
+
+      keywordTrends[keyword] = {
+        labels: matches.map((_, index) => `Feedback ${index + 1}`),
+        data: matches.map((entry) => Math.floor(entry.emotions.primary.confidence * 100))
+      };
+    }
 
     // 🟢 Response Data
     const analyticsData = {
@@ -80,7 +91,7 @@ export const getAnalyticsData = async (req, res) => {
       averageSentiment: parseFloat(averageSentiment.toFixed(2)),
       mostCommonEmotion,
       emotionDistribution,
-      sentimentTrend
+      keywordTrends // New structured trend data
     };
 
     res.status(200).json(analyticsData);
@@ -111,20 +122,20 @@ export const analyzeFile = async (req, res) => {
       .split(/review\s*\d+/i)
       .map(review => review.trim().replace(/^[:\-]+/, '').trim())
       .filter(review => review !== "");
-    
+
     let sentimentResults = [];
     let emotionCounts = {};
     let totalSentiment = 0;
-    
+
     // Array to hold the DB documents before bulk insertion
     let dbEntries = [];
 
     for (let feedback of feedbackList) {
       const { emotions, topics, absa } = await analyzeSentiment(feedback);
-      
+
       // Structure the data for MongoDB
       dbEntries.push({ text: feedback, emotions, topics, absa });
-      
+
       const intensityValue = Math.floor(emotions.primary.confidence * 100);
       totalSentiment += intensityValue;
       sentimentResults.push({ text: feedback, emotions, topics, absa, intensityValue });
@@ -167,7 +178,7 @@ export const searchKeyword = async (req, res) => {
 
     // 🟢 Find all feedbacks containing the keyword
     const matches = await Emotion.find({ text: { $regex: keyword, $options: 'i' } });
-    
+
     let keywordSentences = [];
     let aggregatedSentiment = 0;
     let emotionCounts = {};
@@ -178,45 +189,45 @@ export const searchKeyword = async (req, res) => {
         .split(/(?<=[.!?])\s+|\b(?:but|however|although|though|yet|so|in spite of|despite|whereas|while)\b/i)
         .map(s => s.trim())
         .filter(s => s.length > 0);
-        
+
       for (const sentence of sentences) {
-         if (sentence.toLowerCase().includes(keyword.toLowerCase())) {
-            // 🟢 Perform pure sentiment analysis on just this isolated clause
-            const { emotions, topics, absa } = await analyzeSentiment(sentence);
-            const intensityValue = Math.floor(emotions.primary.confidence * 100);
-            
-            keywordSentences.push({
-               original_id: entry._id,
-               text: sentence,
-               emotion: emotions.primary.emotion,
-               score: intensityValue,
-               absa_breakdown: absa
-            });
-            
-            aggregatedSentiment += intensityValue;
-            let primaryEmotion = emotions.primary.emotion;
-            emotionCounts[primaryEmotion] = (emotionCounts[primaryEmotion] || 0) + 1;
-         }
+        if (sentence.toLowerCase().includes(keyword.toLowerCase())) {
+          // 🟢 Perform pure sentiment analysis on just this isolated clause
+          const { emotions, topics, absa } = await analyzeSentiment(sentence);
+          const intensityValue = Math.floor(emotions.primary.confidence * 100);
+
+          keywordSentences.push({
+            original_id: entry._id,
+            text: sentence,
+            emotion: emotions.primary.emotion,
+            score: intensityValue,
+            absa_breakdown: absa
+          });
+
+          aggregatedSentiment += intensityValue;
+          let primaryEmotion = emotions.primary.emotion;
+          emotionCounts[primaryEmotion] = (emotionCounts[primaryEmotion] || 0) + 1;
+        }
       }
     }
-    
+
     // 🟢 Produce Aggegated Insights for the specific keyword
     const totalMentions = keywordSentences.length;
     const averageSentiment = totalMentions > 0 ? (aggregatedSentiment / totalMentions) : 50;
-    const mostCommonEmotion = Object.keys(emotionCounts).length > 0 
-      ? Object.keys(emotionCounts).reduce((a, b) => emotionCounts[a] > emotionCounts[b] ? a : b) 
+    const mostCommonEmotion = Object.keys(emotionCounts).length > 0
+      ? Object.keys(emotionCounts).reduce((a, b) => emotionCounts[a] > emotionCounts[b] ? a : b)
       : "Neutral";
-      
+
     res.status(200).json({
-       keyword,
-       insights: {
-         totalMentions,
-         averageSentiment: parseFloat(averageSentiment.toFixed(2)),
-         mostCommonEmotion,
-         emotionDistribution: emotionCounts
-       }
+      keyword,
+      insights: {
+        totalMentions,
+        averageSentiment: parseFloat(averageSentiment.toFixed(2)),
+        mostCommonEmotion,
+        emotionDistribution: emotionCounts
+      }
     });
-    
+
   } catch (error) {
     console.error("Error performing keyword search:", error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -1,0 +1,162 @@
+{
+  "totalFeedback": 202,
+  "averageSentiment": 60.55,
+  "mostCommonEmotion": "Joy",
+  "emotionDistribution": {
+    "Joy": 90,
+    "Happy": 41,
+    "Disappointment": 29,
+    "Neutral": 26,
+    "Anger": 16
+  },
+  "keywordTrends": {
+    "delivery": {
+      "labels": [
+        "Feedback 1",
+        "Feedback 2",
+        "Feedback 3",
+        "Feedback 4",
+        "Feedback 5",
+        "Feedback 6",
+        "Feedback 7",
+        "Feedback 8",
+        "Feedback 9",
+        "Feedback 10",
+        "Feedback 11",
+        "Feedback 12",
+        "Feedback 13",
+        "Feedback 14",
+        "Feedback 15",
+        "Feedback 16",
+        "Feedback 17",
+        "Feedback 18",
+        "Feedback 19",
+        "Feedback 20",
+        "Feedback 21",
+        "Feedback 22",
+        "Feedback 23",
+        "Feedback 24",
+        "Feedback 25",
+        "Feedback 26",
+        "Feedback 27",
+        "Feedback 28",
+        "Feedback 29",
+        "Feedback 30",
+        "Feedback 31",
+        "Feedback 32"
+      ],
+      "data": [
+        43,
+        50,
+        43,
+        50,
+        56,
+        56,
+        50,
+        41,
+        50,
+        50,
+        27,
+        47,
+        50,
+        51,
+        51,
+        51,
+        51,
+        53,
+        53,
+        50,
+        67,
+        67,
+        40,
+        50,
+        50,
+        50,
+        50,
+        41,
+        42,
+        50,
+        33,
+        49
+      ]
+    },
+    "quality": {
+      "labels": [
+        "Feedback 1",
+        "Feedback 2",
+        "Feedback 3",
+        "Feedback 4",
+        "Feedback 5",
+        "Feedback 6",
+        "Feedback 7",
+        "Feedback 8",
+        "Feedback 9",
+        "Feedback 10",
+        "Feedback 11",
+        "Feedback 12",
+        "Feedback 13",
+        "Feedback 14",
+        "Feedback 15",
+        "Feedback 16",
+        "Feedback 17",
+        "Feedback 18",
+        "Feedback 19",
+        "Feedback 20",
+        "Feedback 21",
+        "Feedback 22",
+        "Feedback 23",
+        "Feedback 24",
+        "Feedback 25",
+        "Feedback 26"
+      ],
+      "data": [
+        85,
+        69,
+        52,
+        86,
+        30,
+        80,
+        52,
+        66,
+        63,
+        71,
+        55,
+        66,
+        86,
+        45,
+        63,
+        71,
+        55,
+        66,
+        63,
+        71,
+        55,
+        66,
+        63,
+        71,
+        55,
+        66
+      ]
+    },
+    "customer service": {
+      "labels": [
+        "Feedback 1"
+      ],
+      "data": [
+        52
+      ]
+    },
+    "pricing": {
+      "labels": [],
+      "data": []
+    },
+    "fit": {
+      "labels": [],
+      "data": []
+    },
+    "material": {
+      "labels": [],
+      "data": []
+    }
+  }
+}
