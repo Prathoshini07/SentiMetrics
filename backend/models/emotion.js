@@ -17,13 +17,9 @@ const EmotionSchema = new mongoose.Schema({
         }
     },
     topics: { 
-        main: { type: Array, required: true },
-        subtopics: { type: Object, required: true }
+        main: { type: Array, required: true }
     },
-    adorescore: { 
-        overall: { type: Number, required: true },
-        breakdown: { type: Object, required: true }
-    }
+    absa: { type: Object }
 });
 
 // ✅ Export as default

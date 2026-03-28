@@ -8,11 +8,9 @@ const EmotionForm = () => {
   const [result, setResult] = useState(null);
   const [emojis, setEmojis] = useState([]);
 
-  // Array of emojis to randomize
-  const emojiList = ["😊", "😢", "😡", "😮", "😍", "🤔", "😎", "🥳", "😴", "🤩"];
-
-  // Function to generate random emojis
   const generateEmojis = useCallback(() => {
+    // Array of emojis to randomize
+    const emojiList = ["😊", "😢", "😡", "😮", "😍", "🤔", "😎", "🥳", "😴", "🤩"];
     const newEmojis = Array.from({ length: 4 }, () => ({
       emoji: emojiList[Math.floor(Math.random() * emojiList.length)],
       id: Math.random(),
@@ -88,6 +86,11 @@ const EmotionForm = () => {
       <div className="file-upload">
         <Link to="/file-analysis">
           <button>Analyze PDF File</button>
+        </Link>
+      </div>
+      <div className="keyword-search-link">
+        <Link to="/search">
+          <button>Keyword Insights Search</button>
         </Link>
       </div>
     </div>

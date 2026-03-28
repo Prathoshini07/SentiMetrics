@@ -1,8 +1,9 @@
 import express from "express";
-import { analyzeText, analyzeFile, getAllFeedback, getAnalyticsData, upload } from "../controllers/emotionController.js"; 
+import { analyzeText, analyzeFile, getAllFeedback, getAnalyticsData, upload, searchKeyword } from "../controllers/emotionController.js"; 
 
 const router = express.Router();
 
+router.get("/search", searchKeyword);
 router.post("/analyze", analyzeText);        
 router.post("/analyze-file", upload.single("file"), analyzeFile); 
 router.get("/feedback", getAllFeedback);

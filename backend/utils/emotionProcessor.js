@@ -1,4 +1,5 @@
 import { pipeline } from "@xenova/transformers";
+import nlp from "compromise";
 
 // ✅ Load the NLP Model (Multilingual Sentiment)
 let emotion_pipeline;
@@ -23,10 +24,50 @@ export const analyzeSentiment = async (text) => {
     // 🎯 Extract Topics Dynamically
     const topics = extractTopics(text);
 
-    // 🎯 Compute Adorescore Based on Emotions & Topics
-    const adorescore = computeAdorescore(emotions, topics);
+    // 🎯 Perform Aspect-Based Sentiment Analysis (ABSA)
+    const absa = await performABSA(text);
 
-    return { emotions, topics, adorescore };
+    // Merge dynamically discovered ABSA topics into the main topics array
+    Object.keys(absa).forEach((topic) => {
+        if (!topics.main.includes(topic)) {
+            topics.main.push(topic);
+        }
+    });
+
+    return { emotions, topics, absa };
+};
+
+// 🔹 Perform Aspect-Based Sentiment Analysis (ABSA)
+const performABSA = async (text) => {
+    if (!emotion_pipeline) {
+        return {};
+    }
+
+    const sentences = text
+        .split(/(?<=[.!?])\s+|\b(?:but|however|although|though|yet|so|in spite of|despite|whereas|while)\b/i)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+    let absa = {};
+
+    for (const sentence of sentences) {
+        const topicsInSentence = extractTopics(sentence);
+        if (topicsInSentence.main.length > 0) {
+            const emotionResult = await emotion_pipeline(sentence, { top_k: 1 });
+            if (emotionResult && emotionResult.length > 0) {
+                const primary = emotionResult[0];
+                const emotionName = convertLabelToEmotion(primary.label);
+                // Math.floor(confidence * 100) to match how adorescore does it
+                const score = Math.floor(primary.score * 100);
+
+                topicsInSentence.main.forEach(topic => {
+                    absa[topic] = `${emotionName} (${score}%)`;
+                });
+            }
+        }
+    }
+
+    return absa;
 };
 
 const detectEmotions = async (text) => {
@@ -39,7 +80,7 @@ const detectEmotions = async (text) => {
     }
 
     const sentences = text
-        .split(/(?<=[.!?])\s+|but|however|although|though|yet|so|in spite of|despite|whereas|while/i)
+        .split(/(?<=[.!?])\s+|\b(?:but|however|although|though|yet|so|in spite of|despite|whereas|while)\b/i)
         .map(s => s.trim())
         .filter(s => s.length > 0);
 
@@ -110,29 +151,51 @@ const getActivationLevel = (emotion, confidenceScore) => {
 const extractTopics = (text) => {
     const predefined_topics = ["delivery", "quality", "customer service", "pricing", "fit", "material"];
 
-    let topics = { main: [], subtopics: {} };
+    let topics = { main: [] };
 
     predefined_topics.forEach((word) => {
         if (text.toLowerCase().includes(word)) {
             topics.main.push(word.charAt(0).toUpperCase() + word.slice(1));
-            topics.subtopics[word] = [];
         }
     });
 
+    // Also use compromise to find nouns dynamically
+    const doc = nlp(text);
+    // Grab strict nouns, isolating them from adjectives to prevent things like 'good' being tagged
+    const nouns = doc.nouns().json().map(n => n.text.trim());
+    
+    // Filter out common throwaway words, short fragments, or mistaken adjectives
+    const badWords = ['this', 'that', 'they', 'them', 'who', 'it', 'good', 'bad', 'great', 'awesome', 'terrible', 'excellent'];
+    const filteredNouns = nouns.filter(n => n.length > 2 && !badWords.includes(n.toLowerCase()));
+    
+    if (filteredNouns.length > 0) {
+        // Check if the overall text mentions a primary product like "phone" to nest this under it
+        const docFull = nlp(text);
+        const allNouns = docFull.nouns().json().map(n => n.text.trim().toLowerCase());
+        
+        // If "phone", "television", etc. is mentioned anywhere in the overall phrase, make it the main topic 
+        // and this specific noun a subtopic. Otherwise just make this the main topic.
+        let specificNoun = filteredNouns[0].trim().toLowerCase();
+        let primaryProduct = allNouns.find(n => ["phone", "product", "laptop", "television", "tv"].includes(n));
+            
+            if (primaryProduct && specificNoun !== primaryProduct) {
+                const mainTopic = primaryProduct.charAt(0).toUpperCase() + primaryProduct.slice(1);
+                if (!topics.main.includes(mainTopic)) {
+                    topics.main.push(mainTopic);
+                }
+                
+                // For ABSA, we want to label it as "Phone - screen resolution"
+                const combinedTopic = `${mainTopic} - ${specificNoun}`;
+                if (!topics.main.includes(combinedTopic)) {
+                    topics.main.push(combinedTopic);
+                }
+            } else {
+                const mainTopic = specificNoun.charAt(0).toUpperCase() + specificNoun.slice(1);
+                if (!topics.main.includes(mainTopic)) {
+                    topics.main.push(mainTopic);
+                }
+            }
+        }
+
     return topics;
-};
-
-// 🔹 Compute Adorescore Based on Emotions & Topics
-const computeAdorescore = (emotions, topics) => {
-    let scores = {};
-    let totalScore = 0;
-
-    topics.main.forEach((topic) => {
-        let score = Math.floor(emotions.primary.confidence * 100);
-        scores[topic] = score;
-        totalScore += score;
-    });
-
-    let overall = topics.main.length > 0 ? Math.round(totalScore / topics.main.length) : 50;
-    return { overall, breakdown: scores };
 };

@@ -1,0 +1,26 @@
+.search-input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.error-msg {
+  color: #ff4d4d;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.navigation-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.navigation-links button {
+  width: 250px;
+}
